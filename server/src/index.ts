@@ -17,6 +17,18 @@ app.use(cors({ origin: '*' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));  // สำหรับ form data
 
+// Root Route (แก้ "Cannot GET /" – แสดง message API ready)
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'Simple Booking API is running!',
+    endpoints: {
+      healthcheck: '/api/healthcheck',
+      services: '/api/services',
+      bookings: '/api/bookings'
+    }
+  });
+});
+
 // Test Route
 app.get('/api/healthcheck', (req, res) => {
   res.status(200).json({ status: 'UP', message: 'Server is running' });
@@ -35,7 +47,7 @@ process.on('unhandledRejection', (error) => {
 // เชื่อมต่อ DB ก่อน start server
 connectDB()
   .then(() => {
-    app.listen(Number(port), '0.0.0.0', () => {  // แก้: Number(port) เพื่อให้เป็น number
+    app.listen(Number(port), '0.0.0.0', () => {  // Bind all interfaces สำหรับ Railway
       console.log(`Server is running on port: ${port} (Env: ${process.env.NODE_ENV || 'development'})`);
     });
   })
