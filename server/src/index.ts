@@ -17,12 +17,13 @@ app.use(cors({ origin: '*' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));  // สำหรับ form data
 
-// Root Route (แก้ "Cannot GET /" – แสดง message API ready)
+// Root Route (แสดง message API ready)
 app.get('/', (req, res) => {
   res.json({ 
     message: 'Simple Booking API is running!',
     endpoints: {
       healthcheck: '/api/healthcheck',
+      test: '/api/test',  // Test route ใหม่
       services: '/api/services',
       bookings: '/api/bookings'
     }
@@ -32,6 +33,11 @@ app.get('/', (req, res) => {
 // Test Route
 app.get('/api/healthcheck', (req, res) => {
   res.status(200).json({ status: 'UP', message: 'Server is running' });
+});
+
+// Test Route ใหม่ (เช็ค routes load หรือไม่)
+app.get('/api/test', (req, res) => {
+  res.status(200).json({ message: 'Routes loaded successfully!', routes: ['services', 'bookings'] });
 });
 
 // Routes สำหรับ Services และ Bookings
