@@ -36,9 +36,9 @@ const BookingSchema = new Schema<IBooking>(
     },
     customerPhone: {
       type: String,
-      required: [true, 'กรุณาระบุเบอร์โทร'],
+      required: [true, 'กรุณาระบุเบอร์โทร'],  // ถ้าต้องการ optional: required: false
       trim: true,
-      match: [/^[0-9]{10}$/, 'เบอร์โทรต้องเป็นตัวเลข 10 หลัก']
+      match: [/^[0-9]{9,10}$/, 'เบอร์โทรต้องเป็นตัวเลข 9-10 หลัก']  // ปรับ regex: 9-10 หลัก (ไทย 09xxxxxxxx)
     },
     startTime: {
       type: Date,
