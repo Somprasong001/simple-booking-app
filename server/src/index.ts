@@ -10,12 +10,18 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-// CORS: Allow all origins สำหรับ dev/production (localhost:5173, Vercel, etc.)
-app.use(cors({ origin: '*' }));
+// CORS: Allow specific origins สำหรับ dev/production (localhost:5173, Vercel)
+app.use(cors({
+  origin: [
+    'http://localhost:5173',  // Local dev
+    'https://simple-booking-app-three.vercel.app'  // Vercel production URL ของคุณ
+  ],
+  credentials: true  // ถ้าต้องการ cookie/auth ในอนาคต
+}));
 
 // Parser for JSON and URL-encoded bodies
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));  // เพิ่มสำหรับ form data
+app.use(express.urlencoded({ extended: true }));  // สำหรับ form data
 
 // Test Route
 app.get('/api/healthcheck', (req, res) => {
@@ -35,7 +41,7 @@ process.on('unhandledRejection', (error) => {
 // เชื่อมต่อ DB ก่อน start server
 connectDB()
   .then(() => {
-    app.listen(port, () => {
+    app.listen(port, '0.0.0.0', () => {  // Bind all interfaces สำหรับ Railway
       console.log(`Server is running on port: ${port} (Env: ${process.env.NODE_ENV || 'development'})`);
     });
   })
