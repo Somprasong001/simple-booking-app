@@ -44,4 +44,7 @@ const ServiceSchema = new Schema<IService>(
   }
 );
 
+// Index สำหรับ query เร็ว
+ServiceSchema.index({ isActive: 1, createdAt: -1 });
+
 export default mongoose.model<IService>('Service', ServiceSchema);

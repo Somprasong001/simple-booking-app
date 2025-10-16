@@ -63,6 +63,7 @@ const BookingSchema = new Schema<IBooking>(
   }
 );
 
+// Indexes สำหรับ query เร็ว
 BookingSchema.index({ startTime: 1, endTime: 1 });
 BookingSchema.index({ customerEmail: 1 });
 BookingSchema.index({ status: 1 });

@@ -15,4 +15,4 @@ router.post('/', createBooking);
 router.patch('/:id/status', updateBookingStatus);
 router.delete('/:id', cancelBooking);
 
-export default router;
+export default router; 

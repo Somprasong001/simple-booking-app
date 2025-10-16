@@ -9,8 +9,10 @@ export const getAllBookings = async (req: Request, res: Response) => {
 
     if (date) {
       const startDate = new Date(date as string);
+      startDate.setHours(0, 0, 0, 0);
       const endDate = new Date(startDate);
       endDate.setDate(endDate.getDate() + 1);
+      endDate.setHours(0, 0, 0, 0);
       query.startTime = {
         $gte: startDate,
         $lt: endDate
@@ -83,12 +85,14 @@ export const createBooking = async (req: Request, res: Response) => {
     }
 
     const start = new Date(startTime);
-    const end = new Date(start.getTime() + serviceData.duration * 60000);
+    const end = new Date(start.getTime() + serviceData.duration * 60000);  // ms
 
+    // เช็ค conflict (ไม่รวม cancelled)
     const conflictBooking = await Booking.findOne({
       status: { $nin: ['cancelled'] },
       $or: [
-        { startTime: { $lt: end }, endTime: { $gt: start } }
+        { startTime: { $lt: end }, endTime: { $gt: start } },
+        { startTime: { $gte: start, $lt: end } }
       ]
     });
 
@@ -170,7 +174,7 @@ export const cancelBooking = async (req: Request, res: Response) => {
       req.params.id,
       { status: 'cancelled' },
       { new: true }
-    );
+    ).populate('service');
 
     if (!booking) {
       return res.status(404).json({

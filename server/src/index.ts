@@ -1,10 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { connectDB } from './config/database';  // Import connectDB จาก config
-
-// ถ้ามี routes จาก Phase 2: import serviceRoutes from './routes/serviceRoutes';
-// import bookingRoutes from './routes/bookingRoutes';
+import { connectDB } from './config/database';
+import serviceRoutes from './routes/service.routes';  // Import routes ที่ปรับชื่อไฟล์
+import bookingRoutes from './routes/booking.routes';  // Import routes ที่ปรับชื่อไฟล์
 
 dotenv.config();
 
@@ -19,9 +18,9 @@ app.get('/api/healthcheck', (req, res) => {
   res.status(200).json({ status: 'UP', message: 'Server is running' });
 });
 
-// Routes สำหรับ Services และ Bookings (ถ้ามีจาก Phase 2)
-// app.use('/api/services', serviceRoutes);
-// app.use('/api/bookings', bookingRoutes);
+// Routes สำหรับ Services และ Bookings
+app.use('/api/services', serviceRoutes);
+app.use('/api/bookings', bookingRoutes);
 
 // เชื่อมต่อ DB ก่อน start server
 connectDB()
