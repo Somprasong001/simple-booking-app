@@ -23,7 +23,6 @@ app.get('/', (req, res) => {
     message: 'Simple Booking API is running!',
     endpoints: {
       healthcheck: '/api/healthcheck',
-      test: '/api/test',  // Test route ใหม่
       services: '/api/services',
       bookings: '/api/bookings'
     }
@@ -35,14 +34,16 @@ app.get('/api/healthcheck', (req, res) => {
   res.status(200).json({ status: 'UP', message: 'Server is running' });
 });
 
-// Test Route ใหม่ (เช็ค routes load หรือไม่)
-app.get('/api/test', (req, res) => {
-  res.status(200).json({ message: 'Routes loaded successfully!', routes: ['services', 'bookings'] });
+// Test Route เพื่อเช็ค routes (ลบได้หลังทดสอบ)
+app.get('/api/test-routes', (req, res) => {
+  res.status(200).json({ message: 'Routes loaded!', routes: ['services', 'bookings'] });
 });
 
-// Routes สำหรับ Services และ Bookings
+// Routes สำหรับ Services และ Bookings (เพิ่ม log เพื่อ debug)
+console.log('Mounting routes...');
 app.use('/api/services', serviceRoutes);
 app.use('/api/bookings', bookingRoutes);
+console.log('Routes mounted successfully!');
 
 // Handle unhandled promise rejections (ป้องกัน crash)
 process.on('unhandledRejection', (error) => {
