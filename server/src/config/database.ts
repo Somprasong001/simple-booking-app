@@ -14,7 +14,8 @@ export const connectDB = async () => {
     await mongoose.connect(mongoURI);
 
     console.log('✅ MongoDB Connected Successfully!');
-    console.log(`📊 Database: ${mongoose.connection.db.databaseName}`);
+    // แก้ TS18048: ใช้ optional chaining เพื่อเช็ค undefined
+    console.log(`📊 Database: ${mongoose.connection?.db?.databaseName || 'Unknown'}`);
   } catch (error) {
     console.error('❌ MongoDB Connection Error:', error);
     process.exit(1); // หยุดโปรแกรมถ้าเชื่อมต่อไม่ได้
