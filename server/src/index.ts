@@ -10,14 +10,8 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-// CORS: Allow specific origins สำหรับ dev/production (localhost:5173, Vercel)
-app.use(cors({
-  origin: [
-    'http://localhost:5173',  // Local dev
-    'https://simple-booking-app-three.vercel.app'  // Vercel production URL ของคุณ
-  ],
-  credentials: true  // ถ้าต้องการ cookie/auth ในอนาคต
-}));
+// CORS: Allow all origins สำหรับ dev/production (localhost:5173, Vercel, etc.)
+app.use(cors({ origin: '*' }));
 
 // Parser for JSON and URL-encoded bodies
 app.use(express.json());
@@ -41,7 +35,7 @@ process.on('unhandledRejection', (error) => {
 // เชื่อมต่อ DB ก่อน start server
 connectDB()
   .then(() => {
-    app.listen(port, '0.0.0.0', () => {  // Bind all interfaces สำหรับ Railway
+    app.listen(Number(port), '0.0.0.0', () => {  // แก้: Number(port) เพื่อให้เป็น number
       console.log(`Server is running on port: ${port} (Env: ${process.env.NODE_ENV || 'development'})`);
     });
   })
