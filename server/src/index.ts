@@ -10,9 +10,12 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-// แก้ CORS: Allow all origins สำหรับ dev (รวม localhost:5173)
-app.use(cors({ origin: '*' }));  // หรือ ['http://localhost:5173', 'https://your-frontend-url']
+// CORS: Allow all origins สำหรับ dev/production (localhost:5173, Vercel, etc.)
+app.use(cors({ origin: '*' }));
+
+// Parser for JSON and URL-encoded bodies
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));  // เพิ่มสำหรับ form data
 
 // Test Route
 app.get('/api/healthcheck', (req, res) => {
@@ -23,11 +26,17 @@ app.get('/api/healthcheck', (req, res) => {
 app.use('/api/services', serviceRoutes);
 app.use('/api/bookings', bookingRoutes);
 
+// Handle unhandled promise rejections (ป้องกัน crash)
+process.on('unhandledRejection', (error) => {
+  console.error('Unhandled Rejection:', error);
+  process.exit(1);
+});
+
 // เชื่อมต่อ DB ก่อน start server
 connectDB()
   .then(() => {
     app.listen(port, () => {
-      console.log(`Server is running on port: ${port}`);
+      console.log(`Server is running on port: ${port} (Env: ${process.env.NODE_ENV || 'development'})`);
     });
   })
   .catch((error) => {
