@@ -7,6 +7,15 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
+// Interceptor ส่ง token อัตโนมัติ (ถ้ามีจาก localStorage)
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 // Services API
 export const getServices = () => api.get('/services');
 export const createService = (data: any) => api.post('/services', data);

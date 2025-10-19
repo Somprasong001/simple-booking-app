@@ -3,7 +3,7 @@ import { IService } from './service.model';
 
 export interface IBooking extends Document {
   service: IService['_id'];
-  clientId?: mongoose.Types.ObjectId;  // Optional ชั่วคราว (หลัง auth: required)
+  clientId?: mongoose.Types.ObjectId;  // Optional ชั่วคราว (หลัง auth: required = true)
   customerName: string;
   customerEmail: string;
   customerPhone: string;
@@ -25,7 +25,7 @@ const BookingSchema = new Schema<IBooking>(
     clientId: {  // Optional ชั่วคราว
       type: Schema.Types.ObjectId,
       ref: 'User',
-      // required: true  // ลบชั่วคราว
+      // required: true  // ลบชั่วคราว – หลัง auth set จาก req.user._id
     },
     customerName: {
       type: String,

@@ -2,15 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Default Vite Styles (เก็บไว้) */
+/* CSS Reset for Full Screen (ลบ margin/padding default, force 100vw) */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow-x: hidden;  /* ลบ scroll bar ขวา */
+}
+
+/* #root {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+} */
+
+/* Default Vite Styles (เก็บไว้, force light mode) */
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color-scheme: light;  /* Force light mode (ไม่สลับ dark) */
+  color: #213547;
+  background-color: #ffffff;  /* สว่าง */
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -27,14 +47,6 @@ a:hover {
   color: #535bf2;
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
@@ -47,7 +59,7 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #f9f9f9;
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -57,17 +69,4 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
 }

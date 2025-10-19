@@ -6,7 +6,7 @@ import {
   updateService,
   deleteService
 } from '../controllers/service.controller';
-// import { authenticateToken, authorizeRole } from '../middleware/auth';  // Comment ชั่วคราว
+// import { authenticateToken, authorizeRole } from '../middleware/auth';  // ลบชั่วคราว
 
 const router = express.Router();
 

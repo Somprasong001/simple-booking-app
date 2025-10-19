@@ -5,12 +5,17 @@ import User from '../models/user.model';
 export const authenticateToken = async (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];  // Bearer TOKEN
-  if (!token) return res.status(401).json({ success: false, message: 'Access token required' });
+
+  if (!token) {
+    return res.status(401).json({ success: false, message: 'Access token required' });
+  }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as any;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key-12345') as any;
     const user = await User.findById(decoded.userId).select('-password');
-    if (!user) return res.status(403).json({ success: false, message: 'Invalid token' });
+    if (!user) {
+      return res.status(403).json({ success: false, message: 'Invalid token' });
+    }
     (req as any).user = user;
     next();
   } catch (error) {
@@ -18,6 +23,7 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
   }
 };
 
+// Role protection (optional – ใช้เมื่อต้องการจำกัด role)
 export const authorizeRole = (roles: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!roles.includes((req as any).user.role)) {

@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { connectDB } from './config/database';
 import serviceRoutes from './routes/service.routes';
 import bookingRoutes from './routes/booking.routes';
+import authRoutes from './routes/auth.routes';  // ใหม่: Import auth routes
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.get('/', (req, res) => {
     message: 'Simple Booking API is running!',
     endpoints: {
       healthcheck: '/api/healthcheck',
+      auth: '/api/auth/register, /api/auth/login',
       services: '/api/services',
       bookings: '/api/bookings'
     }
@@ -34,7 +36,8 @@ app.get('/api/healthcheck', (req, res) => {
   res.status(200).json({ status: 'UP', message: 'Server is running' });
 });
 
-// Routes สำหรับ Services และ Bookings
+// Routes สำหรับ Auth, Services และ Bookings
+app.use('/api/auth', authRoutes);  // ใหม่: Mount auth routes
 app.use('/api/services', serviceRoutes);
 app.use('/api/bookings', bookingRoutes);
 

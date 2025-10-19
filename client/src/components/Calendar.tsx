@@ -38,10 +38,10 @@ const Calendar: React.FC<Props> = ({ selectedDate, onDateChange, serviceId, onSe
 
   const availableCount = availableSlots.filter(slot => !isSlotBooked(slot)).length;
 
-  if (loading) return <div className="p-4 text-center text-slate-500">กำลังโหลด...</div>;
+  if (loading) return <div className="text-center text-slate-500 py-8 w-full">กำลังโหลด...</div>;
 
   return (
-    <div className="p-4 border rounded">
+    <div className="w-full">  {/* เต็มจอ */}
       <DatePicker
         selected={selectedDate}
         onChange={onDateChange}
@@ -49,9 +49,9 @@ const Calendar: React.FC<Props> = ({ selectedDate, onDateChange, serviceId, onSe
         className="mb-4 p-2 border rounded w-full"
         placeholderText="เลือกวันที่"
       />
-      <h3 className="text-lg font-semibold mb-2 text-slate-800">สล็อตว่าง: {format(selectedDate, 'dd/MM/yyyy')}</h3>
-      <p className="text-sm text-slate-600 mb-4">ว่าง {availableCount}/{availableSlots.length} สล็อต</p>
-      <ul className="space-y-2">
+      <h3 className="text-lg font-semibold mb-2 text-slate-800 px-4">สล็อตว่าง: {format(selectedDate, 'dd/MM/yyyy')}</h3>
+      <p className="text-sm text-slate-600 mb-4 px-4">ว่าง {availableCount}/{availableSlots.length} สล็อต</p>
+      <ul className="space-y-2 px-4 pb-8">
         {availableSlots.map(slot => (
           <li key={slot}>
             <button
@@ -60,7 +60,7 @@ const Calendar: React.FC<Props> = ({ selectedDate, onDateChange, serviceId, onSe
               className={`w-full p-3 rounded-md font-medium transition-colors ${
                 isSlotBooked(slot)
                   ? 'bg-slate-300 text-slate-500 cursor-not-allowed'
-                  : 'bg-green-400 text-white hover:bg-green-500'
+                  : 'bg-green-500 text-white hover:bg-green-600'  // เข้มขึ้น green-500
               }`}
             >
               {slot} {isSlotBooked(slot) ? '(จองแล้ว)' : '(ว่าง)'}
