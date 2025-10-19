@@ -6,6 +6,7 @@ export interface IService extends Document {
   price: number;
   duration: number;
   isActive: boolean;
+  sellerId: mongoose.Types.ObjectId;  // ใหม่: ลิงก์ไป User (seller role)
   createdAt: Date;
   updatedAt: Date;
 }
@@ -37,6 +38,11 @@ const ServiceSchema = new Schema<IService>(
     isActive: {
       type: Boolean,
       default: true
+    },
+    sellerId: {  // ใหม่: ลิงก์ไป User Model (seller role)
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
     }
   },
   {
@@ -46,5 +52,6 @@ const ServiceSchema = new Schema<IService>(
 
 // Index สำหรับ query เร็ว
 ServiceSchema.index({ isActive: 1, createdAt: -1 });
+ServiceSchema.index({ sellerId: 1 });  // ใหม่: query ตาม seller
 
 export default mongoose.model<IService>('Service', ServiceSchema);

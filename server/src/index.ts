@@ -34,16 +34,9 @@ app.get('/api/healthcheck', (req, res) => {
   res.status(200).json({ status: 'UP', message: 'Server is running' });
 });
 
-// Test Route เพื่อเช็ค routes (ลบได้หลังทดสอบ)
-app.get('/api/test-routes', (req, res) => {
-  res.status(200).json({ message: 'Routes loaded!', routes: ['services', 'bookings'] });
-});
-
-// Routes สำหรับ Services และ Bookings (เพิ่ม log เพื่อ debug)
-console.log('Mounting routes...');
+// Routes สำหรับ Services และ Bookings
 app.use('/api/services', serviceRoutes);
 app.use('/api/bookings', bookingRoutes);
-console.log('Routes mounted successfully!');
 
 // Handle unhandled promise rejections (ป้องกัน crash)
 process.on('unhandledRejection', (error) => {

@@ -3,6 +3,7 @@ import { IService } from './service.model';
 
 export interface IBooking extends Document {
   service: IService['_id'];
+  clientId?: mongoose.Types.ObjectId;  // Optional ชั่วคราว (หลัง auth: required)
   customerName: string;
   customerEmail: string;
   customerPhone: string;
@@ -21,6 +22,11 @@ const BookingSchema = new Schema<IBooking>(
       ref: 'Service',
       required: [true, 'กรุณาเลือกบริการ']
     },
+    clientId: {  // Optional ชั่วคราว
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      // required: true  // ลบชั่วคราว
+    },
     customerName: {
       type: String,
       required: [true, 'กรุณาระบุชื่อลูกค้า'],
@@ -36,9 +42,9 @@ const BookingSchema = new Schema<IBooking>(
     },
     customerPhone: {
       type: String,
-      required: [true, 'กรุณาระบุเบอร์โทร'],  // ถ้าต้องการ optional: required: false
+      required: [true, 'กรุณาระบุเบอร์โทร'],
       trim: true,
-      match: [/^[0-9]{9,10}$/, 'เบอร์โทรต้องเป็นตัวเลข 9-10 หลัก']  // ปรับ regex: 9-10 หลัก (ไทย 09xxxxxxxx)
+      match: [/^[0-9]{9,10}$/, 'เบอร์โทรต้องเป็นตัวเลข 9-10 หลัก']
     },
     startTime: {
       type: Date,
@@ -67,5 +73,6 @@ const BookingSchema = new Schema<IBooking>(
 BookingSchema.index({ startTime: 1, endTime: 1 });
 BookingSchema.index({ customerEmail: 1 });
 BookingSchema.index({ status: 1 });
+BookingSchema.index({ clientId: 1 });
 
 export default mongoose.model<IBooking>('Booking', BookingSchema);

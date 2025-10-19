@@ -6,13 +6,17 @@ import {
   updateService,
   deleteService
 } from '../controllers/service.controller';
+// import { authenticateToken, authorizeRole } from '../middleware/auth';  // Comment ชั่วคราว
 
 const router = express.Router();
 
+// GET: เปิดให้ทุกคนดู
 router.get('/', getAllServices);
 router.get('/:id', getServiceById);
-router.post('/', createService);
-router.put('/:id', updateService);
-router.delete('/:id', deleteService);
 
-export default router; 
+// POST/PUT/DELETE: ลบ middleware ชั่วคราวเพื่อทดสอบ
+router.post('/', createService);  // authenticateToken, authorizeRole(['seller', 'admin']),
+router.put('/:id', updateService);  // authenticateToken, authorizeRole(['seller', 'admin']),
+router.delete('/:id', deleteService);  // authenticateToken, authorizeRole(['admin']),
+
+export default router;
