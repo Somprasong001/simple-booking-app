@@ -21,28 +21,29 @@ const BookingForm: React.FC<Props> = ({ serviceId, startTime, onSuccess }) => {
     setLoading(true);
     setError(null);
     try {
-      const endTime = new Date(new Date(startTime).getTime() + 30 * 60000).toISOString();  // +30 นาทีตัวอย่าง
-      await createBooking({ service: serviceId, customerName, customerEmail, customerPhone, startTime, endTime, notes });
+      const endTime = new Date(new Date(startTime).getTime() + 30 * 60000).toISOString();
+      const data = { service: serviceId, customerName, customerEmail, customerPhone, startTime, endTime, notes };
+      await createBooking(data);
       setSuccess(true);
       onSuccess();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'เกิดข้อผิดพลาดในการจอง');
+      setError(err.response?.data?.message || 'เกิดข้อผิดพลาดในการจอง – ลองเช็คข้อมูล');
     }
     setLoading(false);
   };
 
-  if (success) return <div className="p-4 bg-green-100 rounded">จองสำเร็จ! 🎉</div>;
+  if (success) return <div className="p-4 bg-green-100 rounded-md text-green-800 text-center">จองสำเร็จ! 🎉</div>;
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 border rounded space-y-4">
-      <h3 className="text-lg font-bold">กรอกข้อมูลการจอง</h3>
+    <form onSubmit={handleSubmit} className="p-4 space-y-4">
+      <h3 className="text-lg font-bold text-slate-800">กรอกข้อมูลการจอง</h3>
       <input
         type="text"
         placeholder="ชื่อ-นามสกุล"
         value={customerName}
         onChange={(e) => setCustomerName(e.target.value)}
         required
-        className="w-full p-2 border rounded"
+        className="w-full p-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-teal-500"
       />
       <input
         type="email"
@@ -50,25 +51,29 @@ const BookingForm: React.FC<Props> = ({ serviceId, startTime, onSuccess }) => {
         value={customerEmail}
         onChange={(e) => setCustomerEmail(e.target.value)}
         required
-        className="w-full p-2 border rounded"
+        className="w-full p-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-teal-500"
       />
       <input
         type="tel"
-        placeholder="เบอร์โทร (10 หลัก)"
+        placeholder="เบอร์โทร (9-10 หลัก)"
         value={customerPhone}
         onChange={(e) => setCustomerPhone(e.target.value)}
         required
-        className="w-full p-2 border rounded"
+        className="w-full p-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-teal-500"
       />
       <textarea
         placeholder="หมายเหตุ (optional)"
         value={notes}
         onChange={(e) => setNotes(e.target.value)}
         rows={3}
-        className="w-full p-2 border rounded"
+        className="w-full p-3 border border-slate-300 rounded-md focus:ring-2 focus:ring-teal-500"
       />
-      {error && <div className="text-red-500 p-2 bg-red-100 rounded">{error}</div>}
-      <button type="submit" disabled={loading} className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
+      {error && <div className="p-3 bg-red-50 text-red-600 rounded-md border border-red-200">{error}</div>}
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full bg-teal-500 text-white py-3 px-4 rounded-md hover:bg-teal-600 disabled:bg-teal-300"
+      >
         {loading ? 'กำลังส่ง...' : 'ยืนยันการจอง'}
       </button>
     </form>
