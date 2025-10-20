@@ -18,6 +18,19 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLogin }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // เพิ่มการตรวจสอบ username สำหรับการลงทะเบียน
+    if (isRegister && username.length < 3) {
+      setError('ชื่อผู้ใช้ต้องมีอย่างน้อย 3 ตัวอักษร');
+      return;
+    }
+    
+    // เพิ่มการตรวจสอบรหัสผ่าน
+    if (password.length < 6) {
+      setError('รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร');
+      return;
+    }
+    
     setLoading(true);
     setError('');
     try {
@@ -56,10 +69,11 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLogin }) => {
           <>
             <input
               type="text"
-              placeholder="ชื่อผู้ใช้ (username)"
+              placeholder="ชื่อผู้ใช้ (username) - อย่างน้อย 3 ตัวอักษร"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
+              minLength={3}
               className="w-full p-3 border border-slate-300 rounded-md mb-4 focus:ring-2 focus:ring-teal-500"
             />
             <select
@@ -83,10 +97,11 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLogin }) => {
         />
         <input
           type="password"
-          placeholder="รหัสผ่าน"
+          placeholder="รหัสผ่าน - อย่างน้อย 6 ตัวอักษร"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          minLength={6}
           className="w-full p-3 border border-slate-300 rounded-md mb-4 focus:ring-2 focus:ring-teal-500"
         />
         {error && <p className="text-red-500 mb-4 text-center bg-red-50 p-2 rounded-md">{error}</p>}

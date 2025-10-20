@@ -33,7 +33,7 @@ export const getAllBookings = async (req: Request, res: Response) => {
       data: bookings
     });
   } catch (error: any) {
-    console.error('Get bookings error:', error);  // เพิ่ม log
+    console.error('❌ Get bookings error:', error);
     res.status(500).json({
       success: false,
       message: 'เกิดข้อผิดพลาดในการดึงข้อมูลการจอง',
@@ -58,7 +58,7 @@ export const getBookingById = async (req: Request, res: Response) => {
       data: booking
     });
   } catch (error: any) {
-    console.error('Get booking by ID error:', error);
+    console.error('❌ Get booking by ID error:', error);
     res.status(500).json({
       success: false,
       message: 'เกิดข้อผิดพลาดในการดึงข้อมูลการจอง',
@@ -69,17 +69,45 @@ export const getBookingById = async (req: Request, res: Response) => {
 
 export const createBooking = async (req: Request, res: Response) => {
   try {
-    const { service, customerName, customerEmail, customerPhone, startTime, endTime, notes } = req.body;  // รับ endTime จาก frontend
+    const { service, customerName, customerEmail, customerPhone, startTime, endTime, notes } = req.body;
 
-    console.log('Create booking request:', { service, customerName, startTime, endTime });  // Log สำหรับ debug
+    console.log('📝 Create booking request:', { 
+      service, 
+      customerName, 
+      customerEmail, 
+      customerPhone, 
+      startTime, 
+      endTime,
+      notes 
+    });
 
+    // Validation
     if (!service || !customerName || !customerEmail || !customerPhone || !startTime || !endTime) {
       return res.status(400).json({
         success: false,
-        message: 'กรุณากรอกข้อมูลให้ครบถ้วน'
+        message: 'กรุณากรอกข้อมูลให้ครบถ้วน (บริการ, ชื่อ, อีเมล, เบอร์โทร, เวลา)'
       });
     }
 
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(customerEmail)) {
+      return res.status(400).json({
+        success: false,
+        message: 'รูปแบบอีเมลไม่ถูกต้อง'
+      });
+    }
+
+    // Validate phone format (10 digits)
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(customerPhone)) {
+      return res.status(400).json({
+        success: false,
+        message: 'เบอร์โทรศัพท์ต้องเป็นตัวเลข 10 หลัก'
+      });
+    }
+
+    // Check if service exists
     const serviceData = await Service.findById(service);
     if (!serviceData) {
       return res.status(404).json({
@@ -88,11 +116,36 @@ export const createBooking = async (req: Request, res: Response) => {
       });
     }
 
+    // Parse dates
     const start = new Date(startTime);
-    const end = new Date(endTime);  // ใช้ endTime จาก frontend (ไม่ recalculate)
+    const end = new Date(endTime);
 
-    // เช็ค conflict (ไม่รวม cancelled)
+    // Validate date
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      return res.status(400).json({
+        success: false,
+        message: 'รูปแบบวันที่/เวลาไม่ถูกต้อง'
+      });
+    }
+
+    if (start >= end) {
+      return res.status(400).json({
+        success: false,
+        message: 'เวลาสิ้นสุดต้องมากกว่าเวลาเริ่มต้น'
+      });
+    }
+
+    // Check for past dates
+    if (start < new Date()) {
+      return res.status(400).json({
+        success: false,
+        message: 'ไม่สามารถจองย้อนหลังได้'
+      });
+    }
+
+    // Check for conflicting bookings
     const conflictBooking = await Booking.findOne({
+      service,
       status: { $nin: ['cancelled'] },
       $or: [
         { startTime: { $lt: end }, endTime: { $gt: start } },
@@ -107,20 +160,22 @@ export const createBooking = async (req: Request, res: Response) => {
       });
     }
 
+    // Create booking
     const booking = await Booking.create({
       service,
-      customerName,
-      customerEmail,
-      customerPhone,
+      customerName: customerName.trim(),
+      customerEmail: customerEmail.trim().toLowerCase(),
+      customerPhone: customerPhone.trim(),
       startTime: start,
       endTime: end,
-      notes,
+      notes: notes?.trim() || '',
       status: 'pending'
     });
 
+    // Populate service data
     const populatedBooking = await Booking.findById(booking._id).populate('service');
 
-    console.log('Booking created:', booking._id);  // Log สำเร็จ
+    console.log('✅ Booking created successfully:', booking._id);
 
     res.status(201).json({
       success: true,
@@ -128,11 +183,11 @@ export const createBooking = async (req: Request, res: Response) => {
       data: populatedBooking
     });
   } catch (error: any) {
-    console.error('Create booking error:', error);  // Log เฉพาะ error
+    console.error('❌ Create booking error:', error);
     res.status(500).json({
       success: false,
       message: 'เกิดข้อผิดพลาดในการสร้างการจอง',
-      error: error.message  // ส่ง message เฉพาะ (ไม่ stack trace ใน production)
+      error: error.message
     });
   }
 };
@@ -161,13 +216,15 @@ export const updateBookingStatus = async (req: Request, res: Response) => {
       });
     }
 
+    console.log('✅ Booking status updated:', booking._id, '→', status);
+
     res.status(200).json({
       success: true,
       message: 'อัปเดตสถานะสำเร็จ',
       data: booking
     });
   } catch (error: any) {
-    console.error('Update status error:', error);
+    console.error('❌ Update status error:', error);
     res.status(500).json({
       success: false,
       message: 'เกิดข้อผิดพลาดในการอัปเดตสถานะ',
@@ -191,13 +248,15 @@ export const cancelBooking = async (req: Request, res: Response) => {
       });
     }
 
+    console.log('✅ Booking cancelled:', booking._id);
+
     res.status(200).json({
       success: true,
       message: 'ยกเลิกการจองสำเร็จ',
       data: booking
     });
   } catch (error: any) {
-    console.error('Cancel booking error:', error);
+    console.error('❌ Cancel booking error:', error);
     res.status(500).json({
       success: false,
       message: 'เกิดข้อผิดพลาดในการยกเลิกการจอง',

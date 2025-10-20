@@ -2,13 +2,13 @@ import mongoose, { Document, Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 export enum UserRole {
-  CLIENT = 'client',
-  SELLER = 'seller',
-  ADMIN = 'admin'
+  CLIENT = 'Client',
+  SELLER = 'Seller',
+  ADMIN = 'Admin'
 }
 
 export interface IUser extends Document {
-  name: string;
+  username: string;  // เปลี่ยนจาก name เป็น username
   email: string;
   password: string;
   role: UserRole;
@@ -20,7 +20,7 @@ export interface IUser extends Document {
 }
 
 const UserSchema = new Schema<IUser>({
-  name: { type: String, required: true, trim: true },
+  username: { type: String, required: true, unique: true, trim: true, minlength: 3 },  // เพิ่ม unique/minlength
   email: { type: String, required: true, unique: true, lowercase: true },
   password: { type: String, required: true, minlength: 6 },
   role: { type: String, enum: Object.values(UserRole), default: UserRole.CLIENT },
@@ -30,8 +30,12 @@ const UserSchema = new Schema<IUser>({
 // Hash password ก่อน save
 UserSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
-  this.password = await bcrypt.hash(this.password, 12);
-  next();
+  try {
+    this.password = await bcrypt.hash(this.password, 12);
+    next();
+  } catch (error) {
+    next(error as Error);
+  }
 });
 
 // Compare password สำหรับ login
