@@ -103,4 +103,4 @@ export const updateBookingStatus = (id: string, status: string) =>
   api.patch(`/bookings/${id}/status`, { status });
 export const cancelBooking = (id: string) => api.delete(`/bookings/${id}`);
 
-export default api;
+export default api;  

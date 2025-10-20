@@ -123,4 +123,4 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLogin }) => {
   );
 };
 
-export default AuthPage;
+export default AuthPage;  

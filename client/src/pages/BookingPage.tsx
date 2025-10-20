@@ -299,4 +299,4 @@ const BookingPage: React.FC<Props> = ({ serviceId, onBack }) => {
   );
 };
 
-export default BookingPage;
+export default BookingPage;  
